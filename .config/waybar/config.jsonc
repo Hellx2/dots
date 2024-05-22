@@ -1,0 +1,223 @@
+// -*- mode: jsonc -*-
+[{
+    "layer": "top",
+    "position": "top",
+    "height": 25,
+    "spacing": 3,
+    "margin-left": 0,
+    "margin-right": 0,
+    "margin-top": 0,
+    "name": "bar1",
+    "modules-left": [
+        "sway/workspaces",
+        "sway/mode",
+        "sway/scratchpad"
+    ],
+    /*"modules-center": [
+        "sway/window"
+    ],*/
+    "modules-right": [
+        "pulseaudio",
+        "cpu",
+        "memory",
+        "clock",
+        "custom/notification"
+    ],
+    "sway/workspaces": {
+        "disable-scroll": true,
+        "all-outputs": true,
+        "warp-on-scroll": false,
+        "format": "{index}: {name}", // {name}: {icon}
+        "format-icons": {
+            "1": "",
+            "2": "",
+            "3": "",
+            "4": "",
+            "5": "🕮",
+            "urgent": "",
+            "focused": "",
+            "default": ""
+        }
+    },
+    "sway/mode": {
+        "format": "<span style=\"italic\">{}</span>"
+    },
+    "sway/scratchpad": {
+        "format": "{icon} {count}",
+        "show-empty": false,
+        "format-icons": ["", ""],
+        "tooltip": true,
+        "tooltip-format": "{app}: {title}"
+    },
+    "clock": {
+        "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>",
+        "format-alt": "{:%Y-%m-%d}"
+    },
+    "cpu": {
+        "format": "{usage}% ",
+        "tooltip": false
+    },
+    "memory": {
+        "format": "{}% "
+    },
+    "pulseaudio": {
+        // "scroll-step": 1, // %, can be a float
+        "format": "{volume}% {icon}  {format_source}",
+        "format-bluetooth": "{volume}% {icon} {format_source}",
+        "format-bluetooth-muted": " {icon} {format_source}",
+        "format-muted": " {format_source}",
+        "format-source": "{volume}% ",
+        "format-source-muted": "",
+        "format-icons": {
+            "headphone": "",
+            "hands-free": "",
+            "headset": "",
+            "phone": "",
+            "portable": "",
+            "car": "",
+            "default": ["", "", ""]
+        },
+        "on-click": "pavucontrol"
+    },
+    "custom/notification": {
+        "tooltip": false,
+        "format": "{icon}",
+        "format-icons": {
+            "notification": "<span foreground='red'><sup></sup></span>",
+            "none": "",
+            "dnd-notification": "<span foreground='red'><sup></sup></span>",
+            "dnd-none": "",
+            "inhibited-notification": "<span foreground='red'><sup></sup></span>",
+            "inhibited-none": "",
+            "dnd-inhibited-notification": "<span foreground='red'><sup></sup></span>",
+            "dnd-inhibited-none": ""
+        },
+        "return-type": "json",
+        "exec-if": "which swaync-client",
+        "exec": "swaync-client -swb",
+        "on-click": "swaync-client -t -sw",
+        "on-click-right": "swaync-client -d -sw",
+        "escape": true
+    }
+},
+{
+    "layer": "top",
+    "position": "bottom",
+    "height": 45,
+    "spacing": 4,
+    "name": "bar2",
+    "margin-left": 10,
+    "margin-right": 10,
+    //"margin-bottom": 10,
+    "modules-left": [
+        "custom/appmenu",
+        "image#kitty",
+        "image#firefox",
+        "image#discord",
+        "image#spotify",
+        "image#steam",
+        "mpd"
+    ],
+    "modules-right": [
+        "network",
+        "power-profiles-daemon",
+        "backlight",
+        "battery",
+        "tray"
+    ],
+    "mpd": {
+        "format": "{stateIcon} {consumeIcon}{randomIcon}{repeatIcon}{singleIcon}{artist} - {album} - {title} ({elapsedTime:%M:%S}/{totalTime:%M:%S}) ⸨{songPosition}|{queueLength}⸩ {volume}% ",
+        "format-disconnected": "Disconnected ",
+        "format-stopped": "{consumeIcon}{randomIcon}{repeatIcon}{singleIcon}Stopped ",
+        "unknown-tag": "N/A",
+        "interval": 5,
+        "consume-icons": {
+            "on": " "
+        },
+        "random-icons": {
+            "off": "<span color=\"#f53c3c\"></span> ",
+            "on": " "
+        },
+        "repeat-icons": {
+            "on": " "
+        },
+        "single-icons": {
+            "on": "1 "
+        },
+        "state-icons": {
+            "paused": "",
+            "playing": ""
+        },
+        "tooltip-format": "MPD (connected)",
+        "tooltip-format-disconnected": "MPD (disconnected)"
+    },
+    "tray": {
+        "spacing": 10
+    },
+    "backlight": {
+        "format": "{percent}% {icon}",
+        "format-icons": ["", "", "", "", "", "", "", "", ""]
+    },
+    "battery": {
+        "states": {
+            "warning": 30,
+            "critical": 15
+        },
+        "format": "{capacity}% {icon}",
+        "format-full": "{capacity}% {icon}",
+        "format-charging": "{capacity}% ",
+        "format-plugged": "{capacity}% ",
+        "format-alt": "{time} {icon}",
+        "format-icons": ["", "", "", "", ""]
+    },
+    "power-profiles-daemon": {
+        "format": "{icon}",
+        "tooltip-format": "Power profile: {profile}\nDriver: {driver}",
+        "tooltip": true,
+        "format-icons": {
+            "default": "",
+            "performance": "",
+            "balanced": "",
+            "power-saver": ""
+        }
+    },
+    "network": {
+        "format-wifi": "{essid} ({signalStrength}%) ",
+        "format-ethernet": "{ipaddr}/{cidr} ",
+        "tooltip-format": "{ifname} via {gwaddr} ",
+        "format-linked": "{ifname} (No IP) ",
+        "format-disconnected": "Disconnected ⚠",
+        //"format-alt": "{ifname}: {ipaddr}/{cidr}",
+        "on-click": "nm-connection-editor"
+    },
+    "custom/appmenu": {
+        "format": "☰",
+        "interval": 2,
+        "on-click": "sh -c \"if [ $(ps aux | grep wofi | grep -v grep | wc -l) -eq 0 ]; then wofi; else killall wofi; fi\""
+    },
+    "image#firefox": {
+        "path": "/usr/share/icons/hicolor/256x256/apps/firefox-developer-edition.png",
+        "size": 35,
+        "on-click": "firefox-developer-edition"
+    },
+    "image#kitty": {
+        "path": "/usr/share/icons/hicolor/256x256/apps/kitty.png",
+        "size": 35,
+        "on-click": "kitty"
+    },
+    "image#discord": {
+        "path": "/usr/share/icons/hicolor/256x256/apps/discord.png",
+        "size": 35,
+        "on-click": "discord"
+    },
+    "image#spotify": {
+        "path": "/usr/share/icons/hicolor/256x256/apps/spotify.png",
+        "size": 35,
+        "on-click": "spotify"
+    },
+    "image#steam": {
+        "path": "/usr/share/icons/hicolor/256x256/apps/steam.png",
+        "size": 35,
+        "on-click": "steam"
+    }
+}]

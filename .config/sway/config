@@ -1,0 +1,89 @@
+# Read `man 5 sway` for a complete reference.
+
+# Logo key. Use Mod1 for Alt.
+set $mod Mod4
+
+# Home row direction keys, like vim
+set $left h
+set $down j
+set $up k
+set $right l
+
+# Your preferred terminal emulator
+set $term kitty
+
+exec wl-paste --watch clipman store
+
+# wofi setup, configure at your own risk
+set $menu sh -c 'if [ $(ps aux | grep fuzzel | grep -P "(emoji|clipboard|Networks)" | grep -Pv "(grep|vi|ini|paste)" | wc -l) -ne 0 ]; then killall fuzzel; fuzzel -p run:; fi; if [ $(ps aux | grep fuzzel | grep -Pv "(grep|vi|ini)" | wc -l) -eq 0 ]; then fuzzel -p run:; else killall fuzzel; fi'
+set $emoji sh -c 'if [ $(ps aux | grep fuzzel | grep -P "(clipboard|Networks|run)" | grep -Pv "(grep|vi|ini|paste|emoji)" | wc -l) -ne 0 ]; then killall fuzzel; BEMOJI_PICKER_CMD="fuzzel -a center --prompt emoji: -d" bemoji; elif [ $(ps aux | grep -P "(fuzzel|bemoji)" | grep -Pv "(grep|vi|ini)" | wc -l) -eq 0 ]; then BEMOJI_PICKER_CMD="fuzzel -a center --prompt emoji: -d" bemoji; else killall fuzzel; fi'
+set $clip sh -c 'if [ $(ps aux | grep fuzzel | grep -P "(run|emoji|Networks)" | grep -Pv "(grep|vi|ini|clipboard)" | wc -l) -ne 0 ]; then killall fuzzel; clipman pick --tool=CUSTOM -T "fuzzel -a center --prompt clipboard: -d"; elif [ $(ps aux | grep fuzzel | grep -Pv "(grep|vi|ini|clipboard)" | wc -l) -eq 0 ]; then clipman pick --tool=CUSTOM -T "fuzzel -a center --prompt clipboard: -d"; else killall fuzzel; fi'
+set $networks sh -c 'if [ $(ps aux | grep fuzzel | grep -P "(run|emoji|clipboard)" | grep -Pv "(grep|vi|ini|Networks)" | wc -l) -ne 0 ]; then killall fuzzel; networkmanager_dmenu; elif [ $(ps aux | grep fuzzel | grep -Pv "(grep|vi|ini|clipman)" | wc -l) -eq 0 ]; then networkmanager_dmenu; else killall fuzzel; fi'
+
+
+# background
+output * bg /home/hellx2/Downloads/Space-Background-Image-3.jpg fill mode 1920x1080
+
+focus_follows_mouse no
+
+### Keybinds
+
+exec_always sh -c "killall waybar; waybar"
+
+#
+# Status Bar:
+#
+# Read `man 5 sway-bar` for more information about this section.
+#bar {
+#    position top
+#
+#    # When the status_command prints a new line to stdout, swaybar updates.
+#    # The default just shows the current date and time.
+#    status_command while date +'%Y-%m-%d %X'; do sleep 1; done
+#
+#    colors {
+#        statusline #ffffff
+#        background #323232
+#        inactive_workspace #32323200 #32323200 #5c5c5c
+#    }
+#}
+
+bindsym Print exec /usr/bin/sway-interactive-screenshot
+# hide_edge_borders both
+include ~/.config/sway/config.d/*
+
+titlebar_padding 10
+
+gaps inner 10
+#gaps inner 0
+#gaps top 0
+#gaps bottom 0
+#gaps left 0
+#gaps right 0
+
+font pango:"Noto Sans Black" Regular 10
+
+exec swaync
+
+bindsym $mod+n exec swaync-client -t -sw
+
+for_window [app_id="nm-connection-editor"] floating on
+for_window [app_id="pavucontrol"] floating on; floating_maximum_size 600 x 600; floating_minimum_size 600 x 600
+
+# SwayFX section
+corner_radius 10
+shadows enable
+shadow_color #111111
+blur enable
+layer_effects "waybar" blur enable; shadows disable; corner_radius 10
+default_dim_inactive 0.2
+blur_passes 1
+blur_radius 5
+
+# for_window [class=".*"] title_window_icon on
+
+exec_always {
+    gsettings set org.gnome.desktop.interface gtk-theme "Catppuccin Mocha"
+}
+
+titlebar_border_thickness 1

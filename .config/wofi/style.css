@@ -1,0 +1,27 @@
+#window {
+    background: #1e2939;
+    border-radius: 10px 10px 0px 0px;
+}
+
+#input {
+    margin: 5px;
+    border-radius: 10px;
+    background: #2f3a4a;
+    color: #ffffff;
+}
+
+#inner-box {
+    background: #2f3a4a;
+    margin: 5px;
+    border: 1px solid #505050;
+    border-radius: 10px;
+}
+
+#entry {
+    border-radius: 10px;
+    color: #ffffff;
+}
+
+#entry:selected {
+    background: #bb4400;
+}

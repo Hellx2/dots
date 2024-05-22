@@ -1,0 +1,8 @@
+show=drun
+prompt=Enter some text...
+term=kitty
+matching=fuzzy
+location=bottom_left
+allow_images=true
+width=20%
+height=50%
