@@ -36,7 +36,29 @@ vim.cmd([[
     hi @variable.builtin guifg=#eeab3d
     hi LspInlayHint guibg=none
     hi Macro gui=italic
+    hi @keyword.function gui=italic
+    hi Include gui=italic
+    hi @variable guifg=#bbbbff
 ]])
+
+-- Telescope
+vim.cmd([[
+    hi TelescopeNormal guifg=#ffffff guibg=#1c1c1c
+    hi TelescopeBorder guifg=#1c1c1c guibg=#1c1c1c
+    hi TelescopePromptBorder guifg=#2c2c2c guibg=#2c2c2c
+    hi TelescopePromptNormal guifg=#ffffff guibg=#2c2c2c
+    hi TelescopePromptTitle guifg=#ff8888 guibg=#2c2c2c gui=bold
+]])
+
+-- Background colors
+--[[vim.cmd([[
+    hi Normal guibg=#0c0c1c
+    hi NormalNC guibg=#0c0c1c
+    hi NeoTreeNormalNC guibg=#101020
+    hi NeoTreeNormal guibg=#101020
+    hi CursorLine guibg=#1c1c2c
+)]]
+--
 --[[
 hi Normal guibg=#010101
 hi NormalNC guibg=#050505

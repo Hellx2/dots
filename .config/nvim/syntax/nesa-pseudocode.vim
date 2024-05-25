@@ -7,7 +7,7 @@ if exists("b:current_syntax")
     finish
 endif
 
-syn keyword NESAPSCKeyword IF THEN ELSE ELSEIF ENDIF BEGIN END CASEWHERE OTHERWISE ENDCASE WHILE ENDWHILE REPEAT UNTIL NEXT
+syn keyword NESAPSCKeyword IF THEN ELSE ELSEIF ENDIF BEGIN END CASEWHERE OTHERWISE ENDCASE WHILE ENDWHILE REPEAT UNTIL NEXT OR AND
 syn match NESAPSCFor "\(FOR\s\+.\+\s\+\)\@<=IN\(\s\+.\+\s\+TO\s\+.\+\)\@="
 syn match NESAPSCFor "\(FOR\s\+.\+\s\+IN\s\+.\+\s\+\)\@<=TO"
 syn match NESAPSCFor "\(FOR\s\+.\+\s\+\IN\s\+.\+\s\+TO\s\+.\+\s\+\)\@<=STEP\(\s\+.\+\)\@="
@@ -17,9 +17,9 @@ syn match NESAPSCFor "FOR\(\s\+.\+IN\s\+.\+TO\s\+.\+\(\n.*\)\+\s*NEXT\s*\)\@="
 
 syn match NESAPSCNumber "\(0x[0-9a-fA-F]\+\)\|\(0o[0-7]\+\)\|\(0b[01]\+\)\|\(\d\+\(\.\d\+\)\?\)"
 
-syn match NESAPSCFunction "\(BEGIN\s\+\)\@<=.\+\n"
+syn match NESAPSCFunction "\(\(BEGIN\|END\)\s\+\)\@<=.\+\n"
 
-syn match NESAPSCOperator "[<*=/+-]"
+syn match NESAPSCOperator "[<>*=/+-]\+"
 
 " Folds and stuff
 syn region NESAPSCForBlock start="\(FOR\(\s\+.\+IN\s\+.\+TO\s\+.\+\(\(\n.*\)\+\s*NEXT\s*\)\@=\)\)\@<=" end="\(NEXT\)\@=" fold transparent
