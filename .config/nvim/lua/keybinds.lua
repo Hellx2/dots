@@ -11,7 +11,7 @@ vim.keymap.set("n", "<C-Del>", "dw", { silent = true, desc = "delete from cursor
 
 vim.keymap.set({ "i", "n" }, "<C-BS>", function()
     -- get cursor position
-    local curpos = vim.fn.getcurpos()
+    local curpos = vim.fn.getpos(".")
     -- get text on current line
     local line = vim.fn.getline(".")
 
@@ -20,7 +20,7 @@ vim.keymap.set({ "i", "n" }, "<C-BS>", function()
         -- delete the line
         vim.cmd("delete")
 
-        if not curpos[2] == vim.fn.getcurpos(".")[2] + 1 then
+        if curpos[2] == vim.fn.getpos(".")[2] then
             local _key = vim.api.nvim_replace_termcodes("<up>", true, true, true)
             vim.api.nvim_feedkeys(_key, "n", false)
         end
@@ -32,7 +32,7 @@ vim.keymap.set({ "i", "n" }, "<C-BS>", function()
         -- type a space then delete the previous word, space needed so that it doesn't delete two words when there's only a single character
         local key = vim.api.nvim_replace_termcodes("<space><esc>vbd<esc>i", true, true, true)
         vim.api.nvim_feedkeys(key, "n", false)
-        local current_char = vim.fn.getregion(vim.fn.getcurpos(), vim.fn.getcurpos())[1]
+        local current_char = vim.fn.getregion(vim.fn.getpos("."), vim.fn.getpos("."))[1]
         --print('"'..current_char..'"') -- debugging
         if current_char == "" then
             local _key = vim.api.nvim_replace_termcodes("<right>", true, true, true)
@@ -193,18 +193,6 @@ vim.keymap.set({ "i", "n" }, "<C-p>", "<cmd>EasyColor<cr>", { noremap = true })
 
 vim.keymap.set({ "i", "n", "v" }, "<C-r>", require("ssr").open, { noremap = true })
 
-local opts = { noremap = true, silent = true }
-
-local function quickfix()
-    vim.lsp.buf.code_action({
-        filter = function(a)
-            return a.isPreferred
-        end,
-        apply = true,
-    })
-end
-
-vim.keymap.set("n", "<leader>qf", quickfix, opts)
 local moveline = require("moveline")
 vim.keymap.set({ "i", "n" }, "<M-S-up>", moveline.up)
 vim.keymap.set({ "i", "n" }, "<M-S-down>", moveline.down)
@@ -227,7 +215,7 @@ local function quickfix()
     vim.lsp.buf.code_action({
         filter = function(a)
             local title = a.title
-            if title:find("`mut `") then
+            if title:find("`mut ") then
                 return true
             end
             return false
@@ -238,3 +226,15 @@ local function quickfix()
 end
 
 vim.keymap.set({ "i", "n" }, "<M-f>", quickfix, opts)
+
+vim.keymap.set("v", '"', function()
+    local e = vim.fn.getpos(".")
+    local key_ = vim.api.nvim_replace_termcodes("<esc><right>", true, true, true)
+    vim.api.nvim_feedkeys("o", "n", false)
+    vim.api.nvim_feedkeys(key_, "n", false)
+    local _ = vim.fn.getpos(".")
+    vim.api.nvim_feedkeys("i", "n", false)
+    vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('"<delete>', true, true, true), "n", false)
+    vim.fn.setpos(".", e)
+    vim.api.nvim_feedkeys("e", "n", false)
+end)

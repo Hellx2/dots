@@ -83,6 +83,20 @@ require("formatter").setup({
             require("formatter.defaults.prettier"),
         },
 
+        javascript = {
+            function()
+                return {
+                    exe = "prettier",
+                    args = {
+                        "--tab-width=4",
+                        util.escape_path(util.get_current_buffer_file_path()),
+                    },
+                    stdin = true,
+                    try_node_modules = true,
+                }
+            end,
+        },
+
         -- Usethe special "*" filetype for defining formatter configurations on
         -- any filetype
         ["*"] = {

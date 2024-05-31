@@ -67,8 +67,34 @@ return {
                     end,
                 },
 
+                javascript = {
+                    function()
+                        return {
+                            exe = "prettier",
+                            args = {
+                                "--tab-width=4",
+                                util.escape_path(util.get_current_buffer_file_path()),
+                            },
+                            stdin = true,
+                            try_node_modules = true,
+                        }
+                    end,
+                },
+
                 php = {
-                    require("formatter.defaults.prettier"),
+                    function()
+                        return {
+                            exe = "prettier",
+                            args = {
+                                "--tab-width=4",
+                                "--plugin /usr/lib/node_modules/@prettier/plugin-php/standalone.js",
+                                "--bracket-same-line",
+                                util.escape_path(util.get_current_buffer_file_path()),
+                            },
+                            stdin = true,
+                            try_node_modules = true,
+                        }
+                    end,
                 },
 
                 ["*"] = {

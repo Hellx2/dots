@@ -1,18 +1,19 @@
 "$schema" = 'https://starship.rs/config-schema.json'
 
-add_newline = true
+add_newline = false
 
 format = '''
-[╭──](fg:208) [ $directory$rust$package$git_branch ](bg:238)[](fg:238) $fill $time [──╮](fg:208) 
-[│](fg:208)[│$fill││](fg:208) 
-[╰──](fg:208) $character
+[╭──](fg:241) [ $directory$rust$package$git_branch ](bg:238)[](fg:238) $fill $time [──╮ ](fg:241)
+[│](fg:241)[│$fill│](fg:247)[│ ](fg:241)
+[╰──](fg:241) $character
 '''
 
-right_format = '[──╯](fg:208)'
+
+right_format = '[──╯](fg:241)'
 
 [character]
-success_symbol = '[ \$ ](fg:green bg:237)[](fg:237)'
-error_symbol = '[ \$ ](fg:red bg:237)[](fg:237)'
+success_symbol = '[ \$ ](fg:green bg:237)[](fg:237)'
+error_symbol = '[ \$ ](fg:red bg:237)[](fg:237)'
 
 [directory]
 style = 'bold cyan bg:238'
@@ -20,21 +21,22 @@ format = '[$path ](bold cyan bg:238)[$read_only](red)'
 
 [rust]
 style = 'bold bg:238'
-format = '[ ](fg:238 bg:240)[$symbol($version )](bold bg:240)'
+format = '[ ](fg:238 bg:240)[$symbol($version )](bold bg:240)'
 
 [package]
-format = '[ ](fg:240 bg:239)[$symbol$version ](bold bg:239)'
+format = '[ ](fg:240 bg:239)[$symbol$version ](bold bg:239)'
 
 [git_branch]
 style = 'bg:238'
-format = '[ ](fg:239 bg:238)[$symbol$branch(:$remote_branch)](bold bg:238)'
+format = '[ ](fg:239 bg:238)[$symbol$branch(:$remote_branch)](bold bg:238)'
 
 # TODO: SETUP TIME
 [time]
-format = "[](fg:238)[ $time ](bg:238)"
+format = "[](fg:238)[ $time ](bg:238)"
 time_format = "%T"
 disabled = false
 
 [fill]
 style = 'fg:240'
+#symbol = ' '
 symbol = ' '

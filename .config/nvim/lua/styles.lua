@@ -50,6 +50,14 @@ vim.cmd([[
     hi TelescopePromptTitle guifg=#ff8888 guibg=#2c2c2c gui=bold
 ]])
 
+-- Noice
+vim.cmd([[
+    hi NoiceCmdlineIcon guifg=#ff8888
+    hi NoiceCmdlinePopup guibg=#121212 guifg=#ffffff
+    hi NoiceCmdlinePopupBorder guibg=#121212 guifg=#121212
+    hi NoiceCmdlinePopupTitle guifg=#ff8888
+]])
+
 -- Background colors
 --[[vim.cmd([[
     hi Normal guibg=#0c0c1c

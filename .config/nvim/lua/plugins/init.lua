@@ -23,10 +23,32 @@ vim.api.nvim_create_autocmd("InsertLeave", {
 --local actions = require("telescope.actions")
 
 require("lazy").setup({
-    --{ "petertriho/nvim-scrollbar", config = true },
+    require("plugins.themes"),
+    { "Myzel394/easytables.nvim", config = true },
+    "tpope/vim-fugitive",
+    {
+        "jbyuki/instant.nvim",
+        config = function()
+            vim.g.instant_username = "Hellx2"
+        end,
+    },
+    { "niuiic/code-shot.nvim", dependencies = "niuiic/core.nvim", config = true },
+    { "krivahtoo/silicon.nvim", build = "./install.sh", opts = {} },
+    {
+        "vidocqh/auto-indent.nvim",
+        opts = {},
+    },
+    {
+        "gnikdroy/projections.nvim",
+        config = function()
+            require("projections").setup({
+                workspaces = {},
+            })
+        end,
+    },
     {
         "ray-x/go.nvim",
-        dependencies = { -- optional packages
+        dependencies = {
             "ray-x/guihua.lua",
             "neovim/nvim-lspconfig",
             "nvim-treesitter/nvim-treesitter",
@@ -36,7 +58,7 @@ require("lazy").setup({
         end,
         event = { "CmdlineEnter" },
         ft = { "go", "gomod" },
-        build = ':lua require("go.install").update_all_sync()', -- if you need to install/update all binaries
+        build = ':lua require("go.install").update_all_sync()',
     },
     { "seandewar/nvimesweeper", opts = {} },
     {
@@ -108,9 +130,7 @@ require("lazy").setup({
         version = "*", -- Use for stability; omit to use `main` branch for the latest features
         event = "VeryLazy",
         config = function()
-            require("nvim-surround").setup({
-                -- Configuration here, or leave empty to use defaults
-            })
+            require("nvim-surround").setup({})
         end,
     },
     {
@@ -132,7 +152,6 @@ require("lazy").setup({
             },
         },
     },
-    "Mofiqul/vscode.nvim",
     "andweeb/presence.nvim",
     {
         "sainnhe/edge",
@@ -176,7 +195,6 @@ require("lazy").setup({
             enable_persistent_history = true,
         },
     },
-    { "navarasu/onedark.nvim", opts = { style = "darker" } },
     "edluffy/hologram.nvim",
     "RRethy/vim-illuminate",
     { "ellisonleao/glow.nvim", config = true, cmd = "Glow" },
@@ -280,7 +298,7 @@ require("lazy").setup({
             vim.cmd("wincmd p")
         end,
     },
-    "mrcjkb/rustaceanvim",
+    { "mrcjkb/rustaceanvim", version = "^4", lazy = false },
     "beauwilliams/statusline.lua",
     "aznhe21/actions-preview.nvim",
     "rmagatti/goto-preview",
@@ -317,13 +335,6 @@ require("lazy").setup({
     "jmbuhr/otter.nvim",
     {
         "soulis-1256/eagle.nvim",
-        config = function()
-            require("eagle").setup({
-                -- override the default values found in config.lua
-            })
-            -- make sure mousemoveevent is enabled
-            vim.o.mousemoveevent = true
-        end,
     },
     require("plugins.treesitter"),
     {

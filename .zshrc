@@ -70,7 +70,7 @@ export ZSH="$HOME/.oh-my-zsh"
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git zsh-autosuggestions)
+plugins=(git zsh-autosuggestions aliases sudo zsh-bat)
 
 source $ZSH/oh-my-zsh.sh
 
@@ -102,7 +102,17 @@ source $ZSH/oh-my-zsh.sh
 source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 source ~/.zsh/catppuccin_mocha-zsh-syntax-highlighting.zsh
 
-alias ll="ls -alF"
+lla() {
+    ls -alFh $* | awk -v black=$(tput setaf 0) -v red=$(tput setaf 1) -v blue=$(tput setaf 4)  -v none=$(printf "\x1b[0m") '{$2=red $2; $3= blue $3; $6=""; $7=""; $8=""; $9=none $9} 1' | column -t
+}
+
+alias ll="lla"
+
+lsblkk() {
+    lsblk $* | awk -v black=$(tput setaf 0) -v red=$(tput setaf 1) -v blue=$(tput setaf 4) -v green=$(printf '\x1b[92m') -v none=$(printf '\x1b[0m') -v orange=$(printf '\x1b[93m') '{$1=none $1; $2=red $2; $3= blue $3; $6=orange $6; $7=green $7} 1' | column -t
+}
+
+alias lsblk="lsblkk"
 
 # Created by `pipx` on 2024-03-30 06:16:50
 export PATH="$PATH:/home/hellx2/.local/bin:/var/lib/snapd/snap/bin:/home/hellx2/.local/share/gem/ruby/3.0.0/bin:/home/hellx2/.cargo/bin"
@@ -115,4 +125,29 @@ alias pamcan="pacman"
 
 export _JAVA_AWT_WM_NONREPARENTING=1
 
+export GOPATH=/home/hellx2/go
+
 fpath+=${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src
+
+precmd () {
+    print ""
+    #printf '\x1b[38;5;240m╭'
+    /opt/hellx2/fill.sh -
+    print ""
+    #print '\x1b[38;5;240m╮\x1b[0m'
+    #printf '\x1b[38;5;240m│'
+    /opt/hellx2/fill.sh " "
+    print ""
+    #print '\x1b[38;5;240m│\x1b[0m'
+}
+
+preexec () {
+    print ""
+    #printf '\x1b[38;5;240m╰'
+    /opt/hellx2/fill.sh -
+    #print '\x1b[38;5;240m╯\x1b[0m'
+    print ""
+    print ""
+}
+
+export PATH=$PATH:$GOPATH/bin
