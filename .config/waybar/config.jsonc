@@ -17,11 +17,13 @@
         "sway/window"
     ],*/
     "modules-right": [
+        "language",
         "pulseaudio",
         "cpu",
         "memory",
         "clock",
-        "custom/notification"
+        "custom/notification",
+        "tray"
     ],
     "sway/workspaces": {
         "disable-scroll": true,
@@ -99,7 +101,8 @@
         "on-click-right": "swaync-client -d -sw",
         "escape": true
     }
-},
+}
+/*
 {
     "layer": "top",
     "position": "bottom",
@@ -108,7 +111,7 @@
     "name": "bar2",
     "margin-left": 10,
     "margin-right": 10,
-    //"margin-bottom": 10,
+    "margin-bottom": 10,
     "modules-left": [
         "custom/appmenu",
         "image#kitty",
@@ -220,4 +223,4 @@
         "size": 35,
         "on-click": "steam"
     }
-}]
+}*/]

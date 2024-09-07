@@ -12,14 +12,19 @@ vim.cmd([[
     set nowritebackup
 ]])
 
+--vim.wo.statuscolumn = "%C%s %l%= │  "
+
 vim.o.tabstop = 4
 vim.o.shiftwidth = 4
 vim.o.termguicolors = true
 vim.o.mousemoveevent = true
-vim.o.updatetime = 298
+vim.o.updatetime = 300
 vim.o.signcolumn = "yes"
 
-vim.o.foldcolumn = "0"
+vim.wo.foldmethod = "expr"
+vim.wo.foldexpr = "nvim_treesitter#foldexpr()"
+
+vim.o.foldcolumn = "2"
 vim.o.foldlevel = 100
 vim.o.foldlevelstart = 101
 vim.o.foldenable = true
@@ -29,67 +34,43 @@ vim.o.expandtab = true
 vim.o.list = true
 
 vim.o.cursorline = true
+vim.o.scrolloff = 7
+
+vim.o.mousemoveevent = true
+
+vim.g.menu_howto = true
+
+require("settings")
 
 require("plugins")
 
-require("eagle").setup({
-    -- override the default values found in config.lua
-})
--- make sure mousemoveevent is enabled
-vim.o.mousemoveevent = true
+function reload()
+    vim.cmd("colorscheme github_dark_dimmed")
 
-require("menus")
+    require("menus")
 
---require("ai")
---require("comp")
---require("dbg")
---require("eaglesetup")
---require("format")
-require("keybinds")
-require("line")
-require("lspsetup")
---require("plugins")
-require("styles")
-require("tgterm")
-require("tree")
---require("tscope")
---require("tsit")
-require("snippets")
-require("autocmds")
+    require("autocmds")
+    require("keybinds")
+    require("line")
+    require("lspsetup")
+    require("nvide")
+    require("snippets")
 
-vim.keymap.set("n", "<C-r>", function() end)
+    vim.cmd.colorscheme("github_dark_dimmed")
+    require("styles")
+    require("tgterm")
+    require("usercmds")
 
-vim.api.nvim_create_user_command("FloatingWin", function(x)
-    local width = tonumber(x.fargs[1])
-    local height = tonumber(x.fargs[2])
-    local ui = vim.api.nvim_list_uis()[1]
+    vim.keymap.set("n", "<C-r>", function() end)
 
-    local col = (ui.width / 2) - (width / 2)
-    local row = (ui.height / 2) - (height / 2)
+    vim.keymap.set("i", "<C-M-l>", "<cmd>lua print(vim.bo[vim.api.nvim_win_get_buf(0)].filetype)<cr>")
 
-    if not (x.fargs[3] == nil) then
-        col = tonumber(x.fargs[3])
-    end
+    vim.schedule(function()
+        vim.cmd("TSContextEnable")
+    end)
+end
 
-    if not (x.fargs[4] == nil) then
-        row = tonumber(x.fargs[4])
-    end
+reload()
 
-    local opts = {
-        relative = "editor",
-        width = width,
-        height = height,
-        col = col,
-        row = row,
-        anchor = "NW",
-        style = "minimal",
-    }
+vim.api.nvim_create_user_command("Reload", reload, {})
 
-    local buf = vim.api.nvim_create_buf(false, true)
-
-    local win = vim.api.nvim_open_win(buf, 1, opts)
-end, { bang = false, nargs = "+" })
-
-vim.keymap.set("i", "<C-M-l>", "<cmd>lua print(vim.bo[vim.api.nvim_win_get_buf(0)].filetype)<cr>")
-
---vim.cmd("colorscheme material-deep-ocean")

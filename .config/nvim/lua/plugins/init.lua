@@ -1,4 +1,5 @@
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
+
 if not (vim.uv or vim.loop).fs_stat(lazypath) then
     vim.fn.system({
         "git",
@@ -9,6 +10,7 @@ if not (vim.uv or vim.loop).fs_stat(lazypath) then
         lazypath,
     })
 end
+
 vim.opt.rtp:prepend(lazypath)
 
 vim.api.nvim_create_autocmd("InsertLeave", {
@@ -20,398 +22,276 @@ vim.api.nvim_create_autocmd("InsertLeave", {
     end,
 })
 
---local actions = require("telescope.actions")
+local function load_plugins()
+    require("lazy").setup({
+        require("plugins.rainbow"),
+        require("plugins.themes"),
+        require("plugins.whichkey"),
+        require("plugins.format"),
+        require("plugins.comp"),
+        require("plugins.tscope"),
+        require("plugins.treesitter"),
+        require("plugins.projects"),
+        require("plugins.line"),
+        require("plugins.dbg"),
 
-require("lazy").setup({
-    require("plugins.themes"),
-    { "Myzel394/easytables.nvim", config = true },
-    "tpope/vim-fugitive",
-    {
-        "jbyuki/instant.nvim",
-        config = function()
-            vim.g.instant_username = "Hellx2"
-        end,
-    },
-    { "niuiic/code-shot.nvim", dependencies = "niuiic/core.nvim", config = true },
-    { "krivahtoo/silicon.nvim", build = "./install.sh", opts = {} },
-    {
-        "vidocqh/auto-indent.nvim",
-        opts = {},
-    },
-    {
-        "gnikdroy/projections.nvim",
-        config = function()
-            require("projections").setup({
-                workspaces = {},
-            })
-        end,
-    },
-    {
-        "ray-x/go.nvim",
-        dependencies = {
-            "ray-x/guihua.lua",
-            "neovim/nvim-lspconfig",
-            "nvim-treesitter/nvim-treesitter",
+        -- Always enabled section
+        { "Myzel394/easytables.nvim", config = true },
+        { "EtiamNullam/deferred-clipboard.nvim", config = true },
+        { "akinsho/toggleterm.nvim", config = true },
+        { "m4xshen/autoclose.nvim", config = true },
+        { "cshuaimin/ssr.nvim", config = true },
+        { "folke/neoconf.nvim", opts = {} },
+
+        { "willothy/moveline.nvim", build = "make" },
+
+        "famiu/bufdelete.nvim",
+
+        -- Automatic indentation
+        { "vidocqh/auto-indent.nvim", config = true, enabled = vim.g.settings.autoindent },
+
+        -- Git section
+        { "lewis6991/gitsigns.nvim", config = true, enabled = vim.g.settings.enabled.git },
+        { "tpope/vim-fugitive", enabled = vim.g.settings.enabled.git },
+
+        -- LSP section
+        { "folke/neodev.nvim", config = true, enabled = vim.g.settings.enabled.lsp },
+        { "mfussenegger/nvim-jdtls", ft = "java", enabled = vim.g.settings.enabled.lsp },
+        { "mrcjkb/rustaceanvim", version = "^4", lazy = false, enabled = vim.g.settings.enabled.lsp },
+        { "aznhe21/actions-preview.nvim", enabled = vim.g.settings.enabled.lsp },
+        { "rmagatti/goto-preview", enabled = vim.g.settings.enabled.lsp },
+        { "https://git.sr.ht/~whynothugo/lsp_lines.nvim", config = true, enabled = vim.g.settings.enabled.lsp },
+
+        {
+            "ray-x/lsp_signature.nvim",
+            event = "VeryLazy",
+            opts = {},
+            config = function(_, opts)
+                require("lsp_signature").setup(opts)
+            end,
+            enabled = vim.g.settings.enabled.lsp,
         },
-        config = function()
-            require("go").setup()
-        end,
-        event = { "CmdlineEnter" },
-        ft = { "go", "gomod" },
-        build = ':lua require("go.install").update_all_sync()',
-    },
-    { "seandewar/nvimesweeper", opts = {} },
-    {
-        "nvim-orgmode/orgmode",
-        event = "VeryLazy",
-        ft = { "org" },
-        config = function()
-            -- Setup orgmode
-            require("orgmode").setup({
-                org_agenda_files = "~/orgfiles/**/*",
-                org_default_notes_file = "~/orgfiles/refile.org",
-                mappings = {
-                    global = {
-                        org_agenda = "<C-o>",
+
+        --[[
+        {
+            "ray-x/go.nvim",
+            dependencies = {
+                "ray-x/guihua.lua",
+                "neovim/nvim-lspconfig",
+                "nvim-treesitter/nvim-treesitter",
+            },
+            config = function()
+                require("go").setup()
+            end,
+            event = { "CmdlineEnter" },
+            ft = { "go", "gomod" },
+            build = ':lua require("go.install").update_all_sync()',
+            enabled = vim.g.settings.enabled.lsp,
+        },
+        ]]
+
+        -- Misc
+        { "Bekaboo/dropbar.nvim", dependencies = "nvim-telescope/telescope-fzf-native.nvim" },
+        { "vhyrro/luarocks.nvim", priority = 1000, config = true },
+        { "lukas-reineke/indent-blankline.nvim", main = "ibl", opts = {} },
+        { "CRAG666/code_runner.nvim", opts = { filetype = { go = { "go run $dir" } } } },
+        { "otavioschwanck/arrow.nvim", opts = { show_icons = true, leader_key = ";", buffer_leader_key = "m" } },
+        { "smjonas/inc-rename.nvim", main = "inc_rename", config = true },
+
+        --{ "milkias17/reloader.nvim", dependencies = { "nvim-lua/plenary.nvim" } },
+        --{ "seandewar/nvimesweeper", opts = {} },
+        --{ "folke/twilight.nvim", opts = {} },
+        --{ "LintaoAmons/scratch.nvim", event = "VeryLazy" },
+
+        { "Exafunction/codeium.vim", enabled = vim.g.settings.use_ai },
+
+        "andweeb/presence.nvim",
+        "RRethy/vim-illuminate",
+        "VidocqH/lsp-lens.nvim",
+        "NvChad/nvim-colorizer.lua",
+        "jmbuhr/otter.nvim",
+        "dstein64/nvim-scrollview",
+        "voldikss/vim-floaterm",
+
+        {
+            "windwp/nvim-ts-autotag",
+            ft = { "javascript", "html", "php", "xml", "jsx", "tsx", "markdown", "typescript" },
+        },
+
+        -- Auto save
+        {
+            "okuuva/auto-save.nvim",
+            enabled = vim.g.settings.autosave,
+            cmd = "ASToggle",
+            event = { "InsertLeave", "TextChanged" },
+            opts = {},
+        },
+
+        {
+            "nvim-telescope/telescope-file-browser.nvim",
+            dependencies = { "nvim-telescope/telescope.nvim", "nvim-lua/plenary.nvim" },
+        },
+
+        {
+            "akinsho/bufferline.nvim",
+            dependencies = "nvim-tree/nvim-web-devicons",
+            opts = {
+                options = {
+                    close_command = "Bdelete %d",
+                    right_mouse_command = "Bdelete %d",
+                    hover = {
+                        enabled = true,
+                        delay = -1,
+                        reveal = { "close" },
                     },
-                },
-            })
-
-            -- NOTE: If you are using nvim-treesitter with `ensure_installed = "all"` option
-            -- add `org` to ignore_install
-            -- require('nvim-treesitter.configs').setup({
-            --   ensure_installed = 'all',
-            --   ignore_install = { 'org' },
-            -- })
-        end,
-    },
-    {
-        "RutaTang/quicknote.nvim",
-        config = function()
-            -- you must call setup to let quicknote.nvim works correctly
-            require("quicknote").setup({})
-        end,
-        dependencies = { "nvim-lua/plenary.nvim" },
-    },
-    {
-        "koenverburg/peepsight.nvim",
-        opts = {
-            -- go
-            "function_declaration",
-            "method_declaration",
-            "func_literal",
-
-            -- typescript
-            "class_declaration",
-            "method_definition",
-            "arrow_function",
-            "function_declaration",
-            "generator_function_declaration",
-        },
-    },
-    { "milkias17/reloader.nvim", dependencies = { "nvim-lua/plenary.nvim" } },
-    {
-        "willothy/moveline.nvim",
-        build = "make",
-    },
-    {
-        "gen740/SmoothCursor.nvim",
-        config = function()
-            require("smoothcursor").setup()
-        end,
-    },
-    require("plugins.whichkey"),
-    {
-        "LintaoAmons/scratch.nvim",
-        event = "VeryLazy",
-    },
-    {
-        "kylechui/nvim-surround",
-        version = "*", -- Use for stability; omit to use `main` branch for the latest features
-        event = "VeryLazy",
-        config = function()
-            require("nvim-surround").setup({})
-        end,
-    },
-    {
-        "otavioschwanck/arrow.nvim",
-        opts = {
-            show_icons = true,
-            leader_key = ";", -- Recommended to be a single key
-            buffer_leader_key = "m", -- Per Buffer Mappings
-        },
-    },
-    "famiu/bufdelete.nvim",
-    {
-        "CRAG666/code_runner.nvim",
-        opts = {
-            filetype = {
-                go = {
-                    "go run $dir",
+                    separator_style = "slant",
+                    always_show_bufferline = true,
+                    diagnostics = "nvim_lsp",
                 },
             },
         },
-    },
-    "andweeb/presence.nvim",
-    {
-        "sainnhe/edge",
-        config = function()
-            --vim.cmd.colorscheme("edge")
-        end,
-    },
-    {
-        "cshuaimin/ssr.nvim",
-        main = "ssr",
-        -- Calling setup is optional.
-        config = function()
-            require("ssr").setup({
-                border = "rounded",
-                min_width = 50,
-                min_height = 5,
-                max_width = 120,
-                max_height = 25,
-                adjust_window = true,
-                keymaps = {
-                    close = "q",
-                    next_match = "n",
-                    prev_match = "N",
-                    replace_confirm = "<cr>",
-                    replace_all = "<leader><cr>",
-                },
-            })
-        end,
-    },
-    {
-        "folke/twilight.nvim",
-        opts = {},
-    },
-    {
-        "AckslD/nvim-neoclip.lua",
-        dependencies = {
-            { "kkharji/sqlite.lua", main = "sqlite" },
-            { "nvim-telescope/telescope.nvim" },
-        },
-        opts = {
-            enable_persistent_history = true,
-        },
-    },
-    "edluffy/hologram.nvim",
-    "RRethy/vim-illuminate",
-    { "ellisonleao/glow.nvim", config = true, cmd = "Glow" },
-    --[[{
-        "pwntester/octo.nvim",
-        dependencies = {
-            "nvim-lua/plenary.nvim",
-            "nvim-telescope/telescope.nvim",
-            -- OR 'ibhagwan/fzf-lua',
-            "nvim-tree/nvim-web-devicons",
-        },
-        config = function()
-            require("octo").setup()
-        end,
-    },]]
-    --
-    {
-        "vhyrro/luarocks.nvim",
-        priority = 1000,
-        config = true,
-    },
-    {
-        "lewis6991/gitsigns.nvim",
-        config = true,
-    },
-    {
-        "nvim-neorg/neorg",
-        dependencies = { "luarocks.nvim", "pysan3/pathlib.nvim" },
-        lazy = false, -- Disable lazy loading as some `lazy.nvim` distributions set `lazy = true` by default
-        version = "*", -- Pin Neorg to the latest stable release
-        config = true,
-    },
-    require("plugins.palette"),
-    {
-        "williamboman/mason.nvim",
-        opts = {},
-    },
-    "mfussenegger/nvim-lint",
-    {
-        "neovim/nvim-lspconfig",
-        dependencies = {
-            { "williamboman/mason.nvim", opts = {} },
-            { "williamboman/mason-lspconfig.nvim", opts = {} },
-            { "folke/neodev.nvim", opts = {} },
-        },
-    },
-
-    {
-        "nvim-telescope/telescope.nvim",
-        dependencies = { "nvim-lua/plenary.nvim", "nvim-tree/nvim-web-devicons" },
-        opts = {
-            defaults = {
-                prompt_prefix = "🔎 ",
-            },
-            extensions = {
-                fzf = {
-                    fuzzy = true,
-                    override_generic_sorter = true,
-                    override_file_sorter = true,
-                    case_mode = "smart_case",
-                },
-            },
-            pickers = {
-                find_files = { theme = "dropdown" },
-                filetypes = { theme = "dropdown" },
-                neoclip = { theme = "dropdown" },
-                current_buffer_fuzzy_find = { theme = "dropdown" },
-                diagnostics = { theme = "dropdown" },
-                lsp_references = { theme = "dropdown" },
-                oldfiles = { theme = "dropdown" },
-            },
-        },
-        config = function(_, opts)
-            require("telescope").setup(opts)
-        end,
-    },
-    {
-        "Bekaboo/dropbar.nvim",
-        -- optional, but required for fuzzy finder support
-        dependencies = {
-            "nvim-telescope/telescope-fzf-native.nvim",
-        },
-    },
-    { "EtiamNullam/deferred-clipboard.nvim", config = true },
-    "NvChad/nvim-colorizer.lua",
-    { "akinsho/toggleterm.nvim", version = "*", config = true },
-    {
-        "okuuva/auto-save.nvim",
-        cmd = "ASToggle", -- optional for lazy loading on command
-        event = { "InsertLeave", "TextChanged" }, -- optional for lazy loading on trigger events
-        opts = {},
-    },
-    { "https://git.sr.ht/~whynothugo/lsp_lines.nvim", config = true },
-    { "folke/neodev.nvim", opts = {} },
-    { "m4xshen/autoclose.nvim", config = true },
-    {
-        "folke/trouble.nvim",
-        config = function()
-            require("trouble").setup({})
-            require("trouble").open()
-            vim.cmd("wincmd p")
-        end,
-    },
-    { "mrcjkb/rustaceanvim", version = "^4", lazy = false },
-    "beauwilliams/statusline.lua",
-    "aznhe21/actions-preview.nvim",
-    "rmagatti/goto-preview",
-    "VidocqH/lsp-lens.nvim",
-    {
-        "akinsho/bufferline.nvim",
-        dependencies = "nvim-tree/nvim-web-devicons",
-    },
-    { "windwp/nvim-ts-autotag" },
-    {
-        "folke/noice.nvim",
-        opts = {
-            lsp = {
-                -- override markdown rendering so that **cmp** and other plugins use **Treesitter**
-                override = {
-                    ["vim.lsp.util.convert_input_to_markdown_lines"] = true,
-                    ["vim.lsp.util.stylize_markdown"] = true,
-                    ["cmp.entry.get_documentation"] = true, -- requires hrsh7th/nvim-cmp
-                },
-                signature = {
-                    enabled = false,
-                },
-            },
-            -- you can enable a preset for easier configuration
-            presets = {
-                bottom_search = true, -- use a classic bottom cmdline for search
-                command_palette = true, -- position the cmdline and popupmenu together
-                long_message_to_split = true, -- long messages will be sent to a split
-                inc_rename = false, -- enables an input dialog for inc-rename.nvim
-                lsp_doc_border = false, -- add a border to hover docs and signature help
-            },
-        },
-    },
-    "jmbuhr/otter.nvim",
-    {
-        "soulis-1256/eagle.nvim",
-    },
-    require("plugins.treesitter"),
-    {
-        "kevinhwang91/nvim-ufo",
-        dependencies = "kevinhwang91/promise-async",
-        opts = {
-            provider_selector = function(_, _, _)
-                return { "treesitter", "indent" }
+        {
+            "folke/trouble.nvim",
+            config = function()
+                require("trouble").setup({
+                    open_no_results = true,
+                })
+                --require("trouble").open("diagnostics")
+                vim.cmd("wincmd p")
             end,
         },
-    },
-    {
-        "rcarriga/nvim-notify",
-        config = function()
-            require("notify").setup({
-                fps = 60,
-                stages = "fade",
-                level = 2,
-                minimum_width = 50,
-                timeout = 2000,
-                top_down = false,
-            })
-        end,
-    },
-    {
-        "nvim-neo-tree/neo-tree.nvim",
-        dependencies = { "MunifTanjim/nui.nvim" },
-        opts = {
-            close_if_last_window = true,
-            default_component_configs = {
-                file_size = {
-                    enabled = false,
+
+        {
+            "nvim-treesitter/nvim-treesitter-context",
+            main = "treesitter-context",
+            opts = { mode = "topline", max_lines = 5 },
+        },
+
+        {
+            "AckslD/nvim-neoclip.lua",
+            dependencies = {
+                { "kkharji/sqlite.lua", main = "sqlite" },
+                { "nvim-telescope/telescope.nvim" },
+            },
+            opts = {
+                enable_persistent_history = true,
+            },
+        },
+        {
+            "neovim/nvim-lspconfig",
+            dependencies = {
+                { "williamboman/mason.nvim", opts = {} },
+                { "williamboman/mason-lspconfig.nvim", opts = {} },
+                { "folke/neodev.nvim", opts = {} },
+            },
+        },
+
+        {
+            "folke/noice.nvim",
+            opts = {
+                lsp = {
+                    override = {
+                        ["vim.lsp.util.convert_input_to_markdown_lines"] = true,
+                        ["vim.lsp.util.stylize_markdown"] = true,
+                        ["cmp.entry.get_documentation"] = true,
+                    },
+                    signature = {
+                        enabled = false,
+                    },
                 },
-                type = {
-                    enabled = true,
-                    required_width = 20,
+                presets = {
+                    bottom_search = true, -- use a classic bottom cmdline for search
+                    command_palette = true, -- position the cmdline and popupmenu together
+                    long_message_to_split = true, -- long messages will be sent to a split
+                    inc_rename = false, -- enables an input dialog for inc-rename.nvim
+                    lsp_doc_border = false, -- add a border to hover docs and signature help
                 },
             },
         },
-    },
-    require("plugins.format"),
-    require("plugins.comp"),
-    {
-        "catppuccin/nvim",
-        priority = 1000,
-        config = function()
-            vim.cmd.colorscheme("catppuccin")
-        end,
-    },
-    --{ "Exafunction/codeium.nvim", dependencies = "Exafunction/codeium.vim" },
-    {
-        "ray-x/lsp_signature.nvim",
-        event = "VeryLazy",
-        opts = {},
-        config = function(_, opts)
-            require("lsp_signature").setup(opts)
-        end,
-    },
-    "dstein64/nvim-scrollview",
-    "voldikss/vim-floaterm",
-    {
-        "iamcco/markdown-preview.nvim",
-        cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },
-        ft = { "markdown" },
-        build = function()
-            vim.fn["mkdp#util#install"]()
-        end,
-    },
-    { "lukas-reineke/indent-blankline.nvim", main = "ibl", opts = {} },
-    {
-        "nvim-pack/nvim-spectre",
-        dependencies = "nvim-lua/plenary.nvim",
-        opts = { open_cmd = "FloatingWin 100 15 215 2" },
-    },
-    {
-        "nvim-treesitter/nvim-treesitter-context",
-        main = "treesitter-context",
-        config = true,
-    },
-})
+        {
+            "kevinhwang91/nvim-ufo",
+            dependencies = "kevinhwang91/promise-async",
+            opts = {
+                provider_selector = function(_, _, _)
+                    return { "treesitter", "indent" }
+                end,
+            },
+        },
+        {
+            "rcarriga/nvim-notify",
+            config = function()
+                require("notify").setup({
+                    fps = 60,
+                    stages = "fade",
+                    timeout = 2000,
+                    top_down = false,
+                })
+            end,
+        },
+
+        {
+            "folke/todo-comments.nvim",
+            dependencies = { "nvim-lua/plenary.nvim" },
+            opts = {},
+        },
+
+        {
+            "MeanderingProgrammer/markdown.nvim",
+            main = "render-markdown",
+            opts = {},
+            name = "render-markdown", -- Only needed if you have another plugin named markdown.nvim
+            dependencies = { "nvim-treesitter/nvim-treesitter", "echasnovski/mini.nvim" }, -- if you use the mini.nvim suite
+            -- dependencies = { 'nvim-treesitter/nvim-treesitter', 'echasnovski/mini.icons' }, -- if you use standalone mini plugins
+            -- dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-tree/nvim-web-devicons' }, -- if you prefer nvim-web-devicons
+        },
+
+        -- Tree section
+        {
+            "nvim-neo-tree/neo-tree.nvim",
+            dependencies = { "MunifTanjim/nui.nvim", "folke/trouble.nvim" },
+            opts = {
+                close_if_last_window = true,
+                default_component_configs = {
+                    file_size = {
+                        enabled = false,
+                    },
+                    type = {
+                        enabled = true,
+                        required_width = 20,
+                    },
+                    indent = {
+                        with_expanders = true,
+                        expander_collapsed = "",
+                        expander_expanded = "",
+                        expander_highlight = "NeoTreeExpander",
+                    },
+                },
+            },
+            config = function(opts)
+                require("neo-tree").setup(opts)
+
+                vim.schedule(function()
+                    vim.cmd({ cmd = "Neotree", args = { "action=show" } })
+                end)
+            end,
+            enabled = vim.g.settings.enabled.tree,
+        },
+
+        {
+            "iamcco/markdown-preview.nvim",
+            cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },
+            ft = { "markdown" },
+            build = function()
+                vim.fn["mkdp#util#install"]()
+            end,
+        },
+
+        {
+            "NeogitOrg/neogit",
+            dependencies = { "nvim-lua/plenary.nvim", "sindrets/diffview.nvim", "nvim-telescope/telescope.nvim" },
+            config = true,
+        },
+    })
+end
+
+load_plugins()

@@ -24,7 +24,7 @@ require("noice").setup({
 
 vim.cmd([[
     hi Function gui=italic
-    hi @keyword.return gui=italic
+    hi @keyword.return gui=italic guifg=#aaaaff
     hi Repeat gui=italic
     hi Keyword gui=italic
     hi String gui=italic
@@ -77,4 +77,21 @@ hi NormalNC guibg=#050505
     hi @lsp.type.class guifg=#2eafd9
     hi @lsp.type.interface guifg=#ff5555
 ]]
+--
+
+-- Fix Darcula theme (disable when not using darcula)
+--[[vim.cmd([[
+    hi Normal guibg=#1a1a1f
+    hi FoldColumn guifg=#555555
+    hi WinSeparator guifg=#333333
+    hi LineNr guifg=#555555
+    hi NonText guifg=#1b1b1b
+    hi NeoTreeNormal guibg=#2a2a2d
+    hi NeoTreeNormalNC guibg=#2a2a2d
+    hi NeoTreeDirectoryIcon guifg=#666666
+    hi NeoTreeDirectoryName guifg=#dddddd
+    hi NeoTreeMessage guifg=#777777
+    hi NeoTreeCursorLine guibg=#2f426e
+    hi CursorLine guibg=#252529
+    ]]
 --

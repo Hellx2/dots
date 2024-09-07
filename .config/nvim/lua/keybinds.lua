@@ -1,17 +1,11 @@
---------------------------
--- Insert mode keybinds --
---------------------------
+vim.g.mapleader = "<space>"
 
 vim.keymap.set("n", "qa", "<cmd>qa<cr>")
 vim.keymap.set("n", "qq", "<cmd>q<cr>")
 
-vim.keymap.set({ "i", "n" }, "<C-b>", "<cmd>Arrow open<cr>")
-
-vim.keymap.set("n", "<C-Del>", "dw", { silent = true, desc = "delete from cursor to end of word" })
-
 vim.keymap.set({ "i", "n" }, "<C-BS>", function()
     -- get cursor position
-    local curpos = vim.fn.getpos(".")
+    local curpos = vim.fn.getcurpos()
     -- get text on current line
     local line = vim.fn.getline(".")
 
@@ -20,7 +14,7 @@ vim.keymap.set({ "i", "n" }, "<C-BS>", function()
         -- delete the line
         vim.cmd("delete")
 
-        if curpos[2] == vim.fn.getpos(".")[2] then
+        if not curpos[2] == vim.fn.getcurpos(".")[2] + 1 then
             local _key = vim.api.nvim_replace_termcodes("<up>", true, true, true)
             vim.api.nvim_feedkeys(_key, "n", false)
         end
@@ -32,7 +26,7 @@ vim.keymap.set({ "i", "n" }, "<C-BS>", function()
         -- type a space then delete the previous word, space needed so that it doesn't delete two words when there's only a single character
         local key = vim.api.nvim_replace_termcodes("<space><esc>vbd<esc>i", true, true, true)
         vim.api.nvim_feedkeys(key, "n", false)
-        local current_char = vim.fn.getregion(vim.fn.getpos("."), vim.fn.getpos("."))[1]
+        local current_char = vim.fn.getregion(vim.fn.getcurpos(), vim.fn.getcurpos())[1]
         --print('"'..current_char..'"') -- debugging
         if current_char == "" then
             local _key = vim.api.nvim_replace_termcodes("<right>", true, true, true)
@@ -75,7 +69,7 @@ vim.keymap.set({ "i", "n" }, "<C-s>", function()
     end
 end) -- Save
 
-vim.keymap.set({ "n", "i" }, "<C-x>", function()
+--[[vim.keymap.set({ "n", "i" }, "<C-x>", function()
     require("notify").dismiss()
     require("trouble").close()
     local buf = vim.api.nvim_win_get_buf(0)
@@ -86,16 +80,24 @@ vim.keymap.set({ "n", "i" }, "<C-x>", function()
         vim.cmd("q!")
     end
 end) -- Save (if modifiable) and quit
+]]
+--
+
+vim.keymap.set({ "i", "n" }, "<C-x>", "<cmd>delete<cr>")
+vim.keymap.set({ "i", "n" }, "<C-c>", "<cmd>yank<cr>")
+vim.keymap.set({ "v" }, "<C-x>", "d")
+vim.keymap.set({ "v" }, "<C-c>", "y")
 
 vim.keymap.set({ "n", "i" }, "<C-q>", function()
-    if vim.bo[vim.api.nvim_win_get_buf(0)].modifiable then
-        vim.cmd("w")
+    if vim.bo[vim.api.nvim_win_get_buf(0)].readonly then
+        vim.cmd("qa!")
+    else
+        vim.cmd("xa!")
     end
-    vim.cmd("qa!")
 end) -- Save (if modifiable) and quit all windows
 
-vim.keymap.set({ "n", "i" }, "<C-S-x>", "<cmd>q!<cr>") -- Forcefully quit without saving
-vim.keymap.set({ "n", "i" }, "<C-S-q>", "<cmd>qa!<cr>") -- Forcefully quit all windows without saving
+--vim.keymap.set({ "n", "i" }, "<C-S-x>", "<cmd>q!<cr>") -- Forcefully quit without saving
+--vim.keymap.set({ "n", "i" }, "<C-S-q>", "<cmd>qa!<cr>") -- Forcefully quit all windows without saving
 
 -- Moving windows
 vim.keymap.set({ "n", "i" }, "<M-left>", "<cmd>wincmd H<cr>") -- Move window to far left
@@ -112,32 +114,30 @@ vim.keymap.set({ "n", "i" }, "<C-M-down>", "<cmd>wincmd j<cr>") -- Switch to win
 -- Copying and pasting
 vim.keymap.set({ "i", "n" }, "<C-v>", "<cmd>put<cr>")
 vim.keymap.set({ "i", "n" }, "<C-z>", "<cmd>undo<cr>")
+vim.keymap.set({ "i", "n" }, "<C-S-z>", "<cmd>redo<cr>")
 vim.keymap.set({ "i", "n" }, "<C-y>", "<cmd>redo<cr>")
-vim.keymap.set({ "i" }, "<C-a>", "<esc><C-home>v<C-end>")
+vim.keymap.set({ "i" }, "<C-a>", "<esc><cmd>goto 1<cr>v<C-end>")
 
-vim.keymap.set({ "i", "n" }, "<C-e>", function()
-    local key = vim.api.nvim_replace_termcodes("<esc>", true, true, true)
-    vim.api.nvim_feedkeys(key, "n", false)
-    require("actions-preview").code_actions()
-end)
+-- LSP
+if vim.g.settings.enabled.lsp then
+    vim.keymap.set({ "i", "n" }, "<M-cr>", require("actions-preview").code_actions)
+    vim.keymap.set({ "i", "n" }, "<C-S-s>", "<cmd>Trouble diagnostics toggle<cr>")
+end
+
 vim.keymap.set({ "i", "n" }, "<C-l>", require("ufo").openAllFolds)
 vim.keymap.set({ "i", "n" }, "<C-S-l>", require("ufo").closeAllFolds)
 
 -- Telescope
-vim.keymap.set({ "i", "n" }, "<C-f>", "<esc><cmd>Telescope current_buffer_fuzzy_find<cr>") -- Find in current buffer
-vim.keymap.set({ "i", "n" }, "<C-S-f>", "<esc><cmd>Telescope find_files<cr>") -- Find files
-vim.keymap.set({ "i", "n" }, "<C-S-e>", "<esc><cmd>Telescope diagnostics<cr>") -- Show errors and warnings
-vim.keymap.set({ "i", "n" }, "<C-t>", "<esc><cmd>Telescope filetypes<cr>") -- Switch filetype
-vim.keymap.set({ "i", "n" }, "<C-M-f>", "<esc><cmd>Telescope lsp_references<cr>") -- Find references for variable/function
-vim.keymap.set({ "i", "n" }, "<C-h>", "<esc><cmd>Telescope man_pages<cr>") -- Search through help/manual pages
-vim.keymap.set({ "i", "n" }, "<C-S-h>", "<esc><cmd>Telescope oldfiles<cr>") -- File history
--- NOTE: Might need to add keybind for `:Telescope treesitter` and `:Telescope vim_options`
-
---vim.keymap.set({ "i", "n" }, "<C-S-e>", "<cmd>CodeActions all<cr>", { noremap = true })
-
-vim.keymap.set({ "i", "n" }, "<C-w>", "<cmd>bd<cr>")
-
-vim.keymap.set({ "i", "n" }, "<C-S-s>", "<cmd>TroubleToggle<cr>")
+if vim.g.settings.enabled.telescope then
+    vim.keymap.set({ "i", "n" }, "<C-f>", "<cmd>Telescope current_buffer_fuzzy_find<cr>") -- Find in current buffer
+    vim.keymap.set({ "i", "n" }, "<C-S-f>", "<cmd>Telescope find_files<cr>") -- Find files
+    vim.keymap.set({ "i", "n" }, "<C-S-e>", "<cmd>Telescope diagnostics<cr>") -- Show errors and warnings
+    vim.keymap.set({ "i", "n" }, "<C-t>", "<cmd>Telescope filetypes<cr>") -- Switch filetype
+    vim.keymap.set({ "i", "n" }, "<C-M-f>", "<cmd>Telescope lsp_references<cr>") -- Find references for variable/function
+    vim.keymap.set({ "i", "n" }, "<C-h>", "<cmd>Telescope man_pages<cr>") -- Search through help/manual pages
+    vim.keymap.set({ "i", "n" }, "<C-S-h>", "<cmd>Telescope oldfiles<cr>") -- File history
+    -- NOTE: Might need to add keybind for `:Telescope treesitter` and `:Telescope vim_options`
+end
 
 --vim.keymap.set({"i"}, { "<C-r>", "<esc>:IncRename " })
 
@@ -163,78 +163,36 @@ local function t(x)
     vim.cmd.tmap(x)
 end
 
-t({ "<C-x>", "<C-\\>" })
+--t({ "<C-x>", "<C-\\>" })
 t({ "<C-t>", "<C-\\>" })
 t({ "<C-q>", "<cmd>qa!<cr>" })
 
---vim.keymap.set("v", "<C-r>", "<cmd>'<,'>SnipRun<cr>", { noremap = true })
---vim.keymap.set({ "i", "n" }, "<C-r>", "<cmd>SnipRun<cr>", { noremap = true })
+if vim.g.settings.enabled.goto_preview then
+    local goto_preview = require("goto-preview")
 
-local goto_preview = require("goto-preview")
+    vim.keymap.set({ "i", "n" }, "<C-g>", goto_preview.goto_preview_definition, { noremap = true })
+    vim.keymap.set({ "i", "n" }, "<M-g>", goto_preview.goto_preview_type_definition, { noremap = true })
+    vim.keymap.set({ "i", "n" }, "<M-S-g>", goto_preview.goto_preview_implementation, { noremap = true })
+    vim.keymap.set({ "i", "n" }, "<C-M-g>", goto_preview.goto_preview_declaration, { noremap = true })
+    vim.keymap.set({ "i", "n" }, "<C-M-S-g>", goto_preview.goto_preview_references, { noremap = true })
+    vim.keymap.set({ "i", "n" }, "<C-S-g>", goto_preview.close_all_win, { noremap = true })
+end
 
-vim.keymap.set({ "i", "n" }, "<C-g>", goto_preview.goto_preview_definition, { noremap = true })
-vim.keymap.set({ "i", "n" }, "<M-g>", goto_preview.goto_preview_type_definition, { noremap = true })
-vim.keymap.set({ "i", "n" }, "<M-S-g>", goto_preview.goto_preview_implementation, { noremap = true })
-vim.keymap.set({ "i", "n" }, "<C-M-g>", goto_preview.goto_preview_declaration, { noremap = true })
-vim.keymap.set({ "i", "n" }, "<C-M-S-g>", goto_preview.goto_preview_references, { noremap = true })
-vim.keymap.set({ "i", "n" }, "<C-S-g>", goto_preview.close_all_win, { noremap = true })
-
---vim.cmd("imap <script><silent><nowait><expr> <S-tab> codeium#Accept()")
-
-vim.keymap.set("i", "<C-tab>", vim.fn["codeium#Accept"], { expr = true, silent = true })
-
-vim.keymap.set("i", "<S-tab>", vim.fn["codeium#Accept"], { expr = true, silent = true })
-
+if vim.g.settings.use_ai then
+    vim.keymap.set("i", "<C-tab>", vim.fn["codeium#Accept"], { expr = true, silent = true })
+    vim.keymap.set("i", "<S-tab>", vim.fn["codeium#Accept"], { expr = true, silent = true })
+end
 vim.keymap.set({ "i", "n" }, "<C-d>", function()
     require("neo-tree.command").execute({ action = "show", toggle = true })
 end)
 
-vim.keymap.set({ "i", "n" }, "<C-p>", "<cmd>EasyColor<cr>", { noremap = true })
+vim.keymap.set({ "i", "n" }, "<C-p>", "<cmd>foldclose<cr>", { noremap = true })
+vim.keymap.set({ "i", "n" }, "<C-S-p>", "<cmd>foldopen<cr>", { noremap = true })
 
-vim.keymap.set({ "i", "n", "v" }, "<C-r>", require("ssr").open, { noremap = true })
+vim.keymap.set({ "i", "n", "v" }, "<C-c>", "<cmd>yank +<cr>")
+vim.keymap.set({ "i", "n", "v" }, "<C-S-v>", "<cmd>put +<cr>")
 
-local moveline = require("moveline")
-vim.keymap.set({ "i", "n" }, "<M-S-up>", moveline.up)
-vim.keymap.set({ "i", "n" }, "<M-S-down>", moveline.down)
-vim.keymap.set("v", "<M-S-up>", moveline.block_up)
-vim.keymap.set("v", "<M-S-down>", moveline.block_down)
+vim.keymap.set({ "i", "n" }, "<C-b>", "<cmd>Arrow open<cr>")
 
-local quicknote = require("quicknote")
-
-vim.keymap.set({ "i", "n" }, "<C-n>", quicknote.NewNoteAtCurrentLine)
-vim.keymap.set({ "i", "n" }, "<M-n>", quicknote.OpenNoteAtCurrentLine)
-vim.keymap.set({ "n" }, "<space>", "<nop>", { noremap = true })
-
-vim.cmd([[
-    let mapleader=" "
-]])
-
-local opts = { noremap = true, silent = true }
-
-local function quickfix()
-    vim.lsp.buf.code_action({
-        filter = function(a)
-            local title = a.title
-            if title:find("`mut ") then
-                return true
-            end
-            return false
-            --return a.isPreferred
-        end,
-        apply = true,
-    })
-end
-
-vim.keymap.set({ "i", "n" }, "<M-f>", quickfix, opts)
-
-vim.keymap.set("v", '"', function()
-    local e = vim.fn.getpos(".")
-    local key_ = vim.api.nvim_replace_termcodes("<esc><right>", true, true, true)
-    vim.api.nvim_feedkeys("o", "n", false)
-    vim.api.nvim_feedkeys(key_, "n", false)
-    local _ = vim.fn.getpos(".")
-    vim.api.nvim_feedkeys("i", "n", false)
-    vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('"<delete>', true, true, true), "n", false)
-    vim.fn.setpos(".", e)
-    vim.api.nvim_feedkeys("e", "n", false)
-end)
+vim.keymap.set({ "i", "n" }, "<F2>", "<esc>:IncRename ")
+vim.keymap.set({ "i", "n" }, "<F3>", "<cmd>DapToggleBreakpoint<cr>")

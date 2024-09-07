@@ -1,18 +1,25 @@
+if not vim.g.settings.enabled.lsp then
+    return
+end
+
 local lspconfig = require("lspconfig")
 
 local capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities = require("cmp_nvim_lsp").default_capabilities(capabilities)
 
-lspconfig.rust_analyzer.setup({
+--[[
+lspconfig.rust_analyzer.setup {
     capabilities = capabilities,
     settings = {
-        ["rust-analyzer"] = {
+        ['rust-analyzer'] = {
             check = {
-                command = "clippy",
-            },
+                command = "clippy"
+            }
         },
     },
-})
+}
+]]
+--
 
 lspconfig.eslint.setup({
     --- ...
@@ -41,7 +48,8 @@ lspconfig.pyright.setup({
     },
 })
 
---[[lspconfig.lua_ls.setup({
+--[[
+lspconfig.lua_ls.setup({
     on_init = function(client)
         local path = client.workspace_folders[1].name
         if vim.loop.fs_stat(path .. "/.luarc.json") or vim.loop.fs_stat(path .. "/.luarc.jsonc") then
@@ -70,6 +78,7 @@ lspconfig.pyright.setup({
 })
 ]]
 --
+
 vim.api.nvim_create_autocmd("LspAttach", {
     group = vim.api.nvim_create_augroup("UserLspConfig", {}),
     callback = function(ev)
@@ -114,10 +123,6 @@ local servers = {
     "emmet_ls",
     "marksman",
     "jsonls",
-    "neocmake",
-    "pkgbuild_language_server",
-    "vimls",
-    "gopls",
 } -- 'pyright'
 for _, lsp in ipairs(servers) do
     lspconfig[lsp].setup({
@@ -127,15 +132,17 @@ for _, lsp in ipairs(servers) do
 end
 
 vim.diagnostic.config({
-    update_in_insert = true,
     virtual_text = false, -- set to true if lsp_lines disabled
     underline = true,
     signs = true,
+    update_in_insert = true,
+    virtual_lines = true,
 })
 
 vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(vim.lsp.diagnostic.on_publish_diagnostics, {
     virtual_text = false, -- set to true if lsp_lines disabled
     underline = true,
     signs = true,
-    --update_in_insert = true,
+    update_in_insert = true,
+    virtual_lines = true,
 })

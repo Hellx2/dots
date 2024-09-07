@@ -33,4 +33,12 @@ ls.add_snippets("html", {
             "</head>",
         }),
     }),
+    s("doctype", {
+        t({ "<!doctype html>" }),
+    }),
+    s("html", {
+        t({ "<html lang='en'>", "    <head>" }),
+        i(1),
+        t({ "", "    </head>", "<body>", "</body>", "</html>" }),
+    }),
 })

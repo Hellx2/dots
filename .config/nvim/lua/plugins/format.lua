@@ -1,12 +1,15 @@
 return {
     "mhartington/formatter.nvim",
     config = function()
-        vim.cmd([[
-        augroup FormatAutogroup
-            autocmd!
-            autocmd BufWritePost * FormatWrite
-        augroup END
-    ]])
+        if vim.g.settings.format_on_save then
+            vim.cmd([[
+                augroup FormatAutogroup
+                    autocmd!
+                    autocmd BufWritePost * FormatWrite
+                augroup END
+            ]])
+        end
+
         local util = require("formatter.util")
         require("formatter").setup({
             logging = true,
